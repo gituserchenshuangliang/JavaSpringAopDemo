@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!-- 扫描织入 @EnableAspectJAutoProxy  -->
+    <aop:aspectj-autoproxy/>
+
+    <bean id="roleAspect2" class="com.aop.aspect.RoleAspect2"/>
+
+    <aop:config>
+        <aop:aspect ref="roleAspect2">
+            <aop:pointcut id="attack" expression="execution(* com.aop.service.Roleservice2.attack())"/>
+            <aop:before method="before" pointcut="execution(* com.aop.service.Roleservice2.attack(..)) and args(role)"/>
+            <aop:after method="after" pointcut-ref="attack"/>
+            <aop:after-returning method="afterReturning" pointcut-ref="attack"/>
+            <aop:after-throwing method="afterThrowing" pointcut-ref="attack"/>
+            <aop:around method="around" pointcut-ref="attack"/>
+            <!-- 添加引入新功能 -->
+            <aop:declare-parents types-matching="com.aop.service.Roleservice2+" implement-interface="com.aop.service.AddInter" default-impl="com.aop.service.AddInterImpl"/>
+        </aop:aspect>
+    </aop:config>
+
+    <bean id="role" class="com.aop.entity.Role">
+        <property name="id" value="4"/>
+        <property name="name" value="坦克"/>
+        <property name="note" value="护盾保护"/>
+    </bean>
+    <bean id="roleAspect" class="com.aop.aspect.RoleAspect"/>
+    <bean id="roleService" class="com.aop.service.Roleservice"/>
+    <bean id="roleService2" class="com.aop.service.Roleservice2"/>
+</beans>
